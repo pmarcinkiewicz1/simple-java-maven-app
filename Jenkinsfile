@@ -15,7 +15,7 @@ pipeline {
             }
             post {
                 always {
-                    sh 'ls -l'
+                    sh 'ls -l target/surefire-reports/'
                     junit checksName: 'Unit Tests', testResults: 'target/surefire-reports/TEST-com.mycompany.app.AppTest.xml'
                 }
             }
