@@ -6,9 +6,10 @@ pipeline {
                 script {
                 echo "Building"
                 sh 'mvn -B -DskipTests clean package -l buildlog.txt'
-                def logfile = sh 'tail buildlog.txt'
-                echo "${logfile}"
-                publishChecks(name: "Stage Build", status: "COMPLETED", summary: "Building", text: "${logfile}")
+                def log = sh(returnStdout: true, script: 'tail buildlog.txt').trim()
+                
+                echo "${log}"
+                publishChecks(name: "Stage Build", status: "COMPLETED", summary: "Building", text: "${log}")
             }
             }
         }
