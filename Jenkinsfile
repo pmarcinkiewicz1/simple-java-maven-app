@@ -5,7 +5,9 @@ pipeline {
             steps {
                 script {
                 echo "Building"
-                sh 'mvn -B -DskipTests clean package'
+                sh 'mvn -B -DskipTests clean package -l buildlog.txt'
+                def logfile = sh 'tail buildlog.txt'
+                echo "${logfile}"
                 def textvar = "Build ok from var"
                 echo "${textvar}"
                 publishChecks(name: "Stage Build", status: "COMPLETED", summary: "Building", text: "${textvar}")
