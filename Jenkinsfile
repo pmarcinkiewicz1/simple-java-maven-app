@@ -13,6 +13,12 @@ pipeline {
                 echo "Testing"
                 sh 'mvn test'
             }
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml'
+                    junit checksName: 'Unit Tests', testResults: 'target/surefire-reports/*.xml'
+                }
+            }
         }
 
     }
