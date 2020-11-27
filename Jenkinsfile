@@ -16,7 +16,7 @@ pipeline {
             post {
                 always {
                     sh 'ls -l target/surefire-reports/'
-                    junit checksName: 'Unit Tests', testResults: '**target/surefire-reports/TEST-*.xml', keepLongStdio: true
+                    junit checksName: 'Unit Tests', testResults: '**target/surefire-reports/TEST-*.xml', keepLongStdio: true, allowEmptyResults: true
                 }
             }
         }
