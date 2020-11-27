@@ -15,7 +15,7 @@ pipeline {
             }
             post {
                 always {
-                    junit 'target/surefire-reports/*.xml'
+               
                     junit checksName: 'Unit Tests', testResults: 'target/surefire-reports/*.xml'
                 }
             }
