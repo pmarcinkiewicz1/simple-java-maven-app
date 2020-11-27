@@ -3,11 +3,13 @@ pipeline {
     stages {
         stage('Build') {
             steps {
+                script {
                 echo "Building"
                 sh 'mvn -B -DskipTests clean package'
                 def textvar = "Build ok from var"
                 echo "${textvar}"
                 publishChecks(name: "Stage Build", status: "COMPLETED", summary: "Building", text: "${textvar}")
+            }
             }
         }
         stage('Test') {
