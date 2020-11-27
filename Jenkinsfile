@@ -6,7 +6,7 @@ pipeline {
                 withSonarQubeEnv('sonarqube') {
                     // Optionally use a Maven environment you've configured already
                     
-                        sh 'mvn clean package sonar:sonar'
+                       sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar'
                     
                 }
             }
