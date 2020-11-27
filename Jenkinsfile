@@ -5,7 +5,7 @@ pipeline {
             steps {
                 echo "Building"
                 sh 'mvn -B -DskipTests clean package'
-                publishChecks(name: "Stage Build", status: "COMPLETED", summary: "Building")
+                publishChecks(name: "Stage Build", status: "COMPLETED", summary: "Building", text: "Build ok")
             }
         }
         stage('Test') {
