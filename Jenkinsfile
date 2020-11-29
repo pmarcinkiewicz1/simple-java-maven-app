@@ -28,7 +28,7 @@ pipeline {
                        "target": "java-app"
                     }]
                  }"""
-
+                server.upload(uploadSpec)
                 //publishChecks(name: "Stage Build", status: "COMPLETED", summary: "Building", text: "${log}")
             }
             }
