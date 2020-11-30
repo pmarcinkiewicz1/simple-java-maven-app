@@ -5,43 +5,35 @@ pipeline {
             steps {
                 script {
                 withSonarQubeEnv('sonarqube') {                   
-                        sh 'mvn clean package sonar:sonar -l sonarlog.txt'
+                        sh 'mvn clean package sonar:sonar -DjarName="$BUILD_NUMBER" |tee buildlog.txt'
                         def url = sh(returnStdout: true, script: 'grep -oE "(http|https)://(.*)" /tmp/log |grep api').trim()
                         sh "wget $url -O jsonlog"
-
-                
+                        def log = sh(returnStdout: true, script: 'tail buildlog.txt').trim()
+                        publishChecks(name: "Stage Build", status: "COMPLETED", summary: "Building", text: "${log}")
+                         def server = Artifactory.server 'artifactory'
+                        def uploadSpec = """{
+                            "files": [{
+                            "pattern": "target/*.jar",
+                            "target": "java-app"
+                            }]
+                        }"""
+                        server.upload(uploadSpec)
+                        
                 }
             }
         }
         }
-        stage('Build') {
-            steps {
-
-                script {
-                echo "Building"
-                sh 'mvn -B -DskipTests clean package -DjarName="$BUILD_NUMBER" -l buildlog.txt'
-                def log = sh(returnStdout: true, script: 'tail buildlog.txt').trim()
-                def server = Artifactory.server 'artifactory'
-                def uploadSpec = """{
-                    "files": [{
-                       "pattern": "target/*.jar",
-                       "target": "java-app"
-                    }]
-                 }"""
-                server.upload(uploadSpec)
-                //publishChecks(name: "Stage Build", status: "COMPLETED", summary: "Building", text: "${log}")
-            }
-            }
-        }
         stage('Test') {
             steps{
                 echo "Testing"
-                sh 'mvn test'
+                sh 'mvn test |tee testlog.txt'
+                def testlog = sh(returnStdout: true, script: 'tail tetslog.txt').trim()
+                publishChecks(name: "Stage Build", status: "COMPLETED", summary: "Building", text: "${testlog}")
             }
             post {
                 always {
-                    sh 'ls -l target/surefire-reports/'
-                    //junit checksName: 'Unit Tests', testResults: '**target/surefire-reports/TEST-*.xml', keepLongStdio: true, allowEmptyResults: true
+                    junit checksName: 'Unit Tests', testResults: '**target/surefire-reports/TEST-*.xml', keepLongStdio: true, allowEmptyResults: true
+                    publishChecks(name: "Unit Tests", status: "COMPLETED", summary: "Building", text: "${testlog}")
                 }
             }
         }
