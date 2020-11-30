@@ -28,8 +28,7 @@ pipeline {
                 script{
                 echo "Testing"
                 sh 'mvn test |tee testlog.txt'
-                def testlog = sh(returnStdout: true, script: 'tail tetslog.txt').trim()
-                publishChecks(name: "Stage Build", status: "COMPLETED", summary: "Building", text: "${testlog}")
+                def testlog = sh(returnStdout: true, script: 'tail testlog.txt').trim()
                 }
             }
             post {
