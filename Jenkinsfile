@@ -33,8 +33,10 @@ pipeline {
             }
             post {
                 always {
+                    script{
                     junit checksName: 'Unit Tests', testResults: '**target/surefire-reports/TEST-*.xml', keepLongStdio: true, allowEmptyResults: true
                     publishChecks(name: "Unit Tests", status: "COMPLETED", summary: "Building", text: "${testlog}")
+                    }
                 }
             }
         }
