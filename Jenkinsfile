@@ -10,14 +10,6 @@ pipeline {
                         sh "wget $url -O jsonlog"
                         def log = sh(returnStdout: true, script: 'tail buildlog.txt').trim()
                         publishChecks(name: "Stage Build", status: "COMPLETED", summary: "Building", text: "${log}")
-                         def server = Artifactory.server 'artifactory'
-                        def uploadSpec = """{
-                            "files": [{
-                            "pattern": "target/*.jar",
-                            "target": "java-app"
-                            }]
-                        }"""
-                        server.upload(uploadSpec)
                         
                 }
             }
@@ -40,6 +32,21 @@ pipeline {
                 }
             }
         }
+        stage('Upload Artifacts'){
+            steps{
+                script{
+                    def server = Artifactory.server 'artifactory'
+                    def uploadSpec = """{
+                            "files": [{
+                            "pattern": "target/*.jar",
+                            "target": "java-app"
+                            }]
+                        }"""
+                    server.upload(uploadSpec)
+                    publishChecks(name: "Upload Artifacts", status: "COMPLETED", summary: "Aritacts urploaded")
+                }
+            }
+        } 
         
 
     }
