@@ -25,10 +25,12 @@ pipeline {
         }
         stage('Test') {
             steps{
+                script{
                 echo "Testing"
                 sh 'mvn test |tee testlog.txt'
                 def testlog = sh(returnStdout: true, script: 'tail tetslog.txt').trim()
                 publishChecks(name: "Stage Build", status: "COMPLETED", summary: "Building", text: "${testlog}")
+                }
             }
             post {
                 always {
