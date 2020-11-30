@@ -7,8 +7,7 @@ pipeline {
                 withSonarQubeEnv('sonarqube') {                   
                         sh 'mvn clean package sonar:sonar -DjarName="$BUILD_NUMBER" |tee buildlog.txt'
                         def url = sh(returnStdout: true, script: 'grep -oE "(http|https)://(.*)" /tmp/log |grep api').trim()
-                        sh "wget $url -O jsonlog"
-                        def log = sh(returnStdout: true, script: 'tail buildlog.txt').trim()
+                        def log = sh(returnStdout: true, script: 'cat buildlog.txt').trim()
                         publishChecks(name: "Stage Build", status: "COMPLETED", summary: "Building", text: "${log}")
                         
                 }
