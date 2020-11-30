@@ -20,12 +20,12 @@ pipeline {
                 script{
                 echo "Testing"
                 sh 'mvn test |tee testlog.txt'
-                def testlog = sh(returnStdout: true, script: 'tail testlog.txt').trim()
                 }
             }
             post {
                 always {
                     script{
+                    def testlog = sh(returnStdout: true, script: 'tail testlog.txt').trim()
                     junit checksName: 'Unit Tests', testResults: '**target/surefire-reports/TEST-*.xml', keepLongStdio: true, allowEmptyResults: true
                     publishChecks(name: "Unit Tests", status: "COMPLETED", summary: "Building", text: "${testlog}")
                     }
@@ -43,7 +43,7 @@ pipeline {
                             }]
                         }"""
                     server.upload(uploadSpec)
-                    publishChecks(name: "Upload Artifacts", status: "COMPLETED", summary: "Aritacts urploaded")
+                    publishChecks(name: "Upload Artifacts", status: "COMPLETED", summary: "Aritacts uploaded")
                 }
             }
         } 
